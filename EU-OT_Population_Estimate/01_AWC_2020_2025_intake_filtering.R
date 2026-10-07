@@ -1,5 +1,8 @@
-install.packages("readxl")
 library(readxl)
+library(dplyr)
+library(stringr)
+library(measurements)
+library(sf)
 
 source("config.R")
 awc20_25_data <- read_excel(awc, sheet = "AWC 2006-25", col_types = "text", na = c("", " "))
@@ -7,8 +10,6 @@ awc20_25_data <- read_excel(awc, sheet = "AWC 2006-25", col_types = "text", na =
 ########################################
 # Filtering AWC 2020 - 2025 data
 ########################################
-
-library(dplyr)
 
 awc20_25_data <- awc20_25_data %>%
   rename(
@@ -39,7 +40,7 @@ filter(
 
 # 2. Keep only years 2020–2025
 filter(
-  YEAR >= 2020 &
+  YEAR >= 2019 &
     YEAR <= 2025
 ) %>%
 
@@ -88,11 +89,6 @@ awc20_25_data <- awc20_25_data %>%
 # Fix MONTH column
 ########################################
 
-library(stringr)
-
-library(dplyr)
-library(stringr)
-
 awc20_25_data <- awc20_25_data %>%
   
   mutate(
@@ -128,15 +124,6 @@ awc20_25_data <- awc20_25_data %>%
 ########################################
 # Fix Latitude and Longitude
 ########################################
-install.packages(c(
-  "dplyr",
-  "stringr",
-  "measurements"
-))
-
-library(dplyr)
-library(stringr)
-library(measurements)
 
 convert_coord <- function(x) {
   
@@ -252,14 +239,11 @@ awc20_25_data <- awc20_25_data %>%
 # Extracting District and State Codes from Shape file
 ######################################################
 
-library(sf)
-library(dplyr)
-
 # Load the district shapefile object
 load(district_shapefile)
 # check object name
-ls()
-names(dists_sf)
+# ls()
+# names(dists_sf)
 
 
 # Convert AWC data into spatial points
@@ -274,8 +258,8 @@ awc_points <- st_as_sf(
 )
 
 # Ensure shapefile CRS matches
-st_crs(awc_points)
-st_crs(dists_sf)
+# st_crs(awc_points)
+# st_crs(dists_sf)
 
 # If they dont match
 dists_sf <- st_transform(
